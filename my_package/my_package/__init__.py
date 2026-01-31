@@ -1,1 +1,1 @@
-from .zadanie_duze_pyth import Strona, Summary, Table, count_words, dodolu, workfreq
+from .zadanie_duze_pyth import Strona, Summary, Table, CountWords, Dodolu, Workfreq
