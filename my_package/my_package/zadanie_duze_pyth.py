@@ -122,15 +122,18 @@ class Znajdzstrony:
 class Dodolu:
     @staticmethod
     def dodolu(strona: str, moja: str, n: int, t: int, wszystko, historia):
+        print(strona)
         wszystko, cokolwiek = Count.count(strona, wszystko)
         if n != 0:
             strony = Znajdzstrony.znajdzstrony(strona)
             for html in strony:
                 if html.get('href') not in historia:
-                    if requests.post(moja + html.get('href')).status_code != 404:
-                        historia.add(strona)
-                        time.sleep(t)
-                        wszystko = Dodolu.dodolu(moja + html.get('href'), moja, n-1, t, wszystko, historia)
+                    if "wiki" not in html.get('href'):
+                        if requests.post(moja + html.get('href')).status_code != 404:
+                            historia.add(strona)
+                            time.sleep(t)
+                            wszystko = Dodolu.dodolu(moja + html.get('href'), moja, n-1, t, wszystko, historia)
+                        else: print(html.get('href') + " strona poza wiki")
         return wszystko
 
 
@@ -221,7 +224,9 @@ class Strona:
                     s = args.auto_count_words.replace(" ", "_")
                     historia = set()
                     historia.add(self.stronamoja + '/' + s)
-                    Dodolu.dodolu(self.stronamoja + '/' + s, self.stronamoja, args.depth, args.wait, {}, historia)
+                    wszystko = Dodolu.dodolu(self.stronamoja + '/' + s, self.stronamoja, args.depth, args.wait, {}, historia)
+                    with open(s + '.json', 'w', encoding="utf-8") as plik:
+                        json.dump(wszystko, plik, ensure_ascii=False, indent=2)
         if args.analyze_relative_word_frequency is not None:
             if args.mode is not None: 
                 if args.count is not None:
